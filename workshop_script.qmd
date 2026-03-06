@@ -1,0 +1,117 @@
+---
+title: "Data Workshop with Marina 2026-03-06"
+author: "Kari Inch"
+format: html
+editor: visual
+editor_options: 
+  chunk_output_type: console
+---
+## Writing Markdown Text
+
+# Level 1 header
+
+## Level 2 header (renders with a horizontal line underneath)
+
+### Level 3 header
+
+#### Level 4 header
+
+**Bold text**
+
+*Italic*
+
+I can
+
+-Make
+-A
+-List
+
+I can also link [super cool websites](https://restorationfundorg)
+
+**To write code** ctl+alt+i OR Code --> Insert Chunk
+
+```{r}
+2 + 2
+```
+
+
+```{r}
+#| code-fold: true
+
+# This code will only show up if you click on a dropwdown to open it
+2 + 2
+```
+
+```{r}
+#| echo: false
+
+# Your code will not show at all, only the output
+2 + 2
+```
+
+```{r}
+#| include: false
+
+# This code will run, but neither the code nor the output will render
+2 + 2
+```
+
+# Penguins Analysis
+
+## About
+
+Purpose of this script 
+
+omthing about the data and anything important that you would need to remember
+
+
+## Setup
+
+```{r}
+# Load libraries ----
+library(tidyverse)
+library(here)
+library(janitor)
+library(lubridate) # date and time wrangling
+library(gghighlight)
+library(sysfonts)
+library(showtext)
+
+# Read in data ----
+penguins_raw <- read_csv(here("data", "raw", "messy_penguins.csv"))
+nesting_raw <- read_csv(here("data", "raw", "nesting.csv"))
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
