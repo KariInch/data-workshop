@@ -83,14 +83,128 @@ nesting_raw <- read_csv(here("data", "raw", "nesting.csv"))
 ```
 
 
+## Data exploration
+
+```{r}
+# What columns are in the penguins data?
+colnames(penguins_raw)
+
+# How many penguin species
+n_distinct(penguins_raw$Species) # use $ to call a specific column from a dataframe
+
+# What are they?
+unique(penguins_raw$Species)
+
+# What islands?
+unique(penguins_raw$island)
+```
+
+## Data cleaning
+```{r}
+# Peek at the data
+head(penguins_raw) # prints out a snip-it of the dataframe in the console
+```
 
 
+```{r}
+# Clean up column names
+penguins_clean <- penguins_raw %>% 
+  clean_names()
 
+# Check columns fix
+colnames(penguins_clean)
+```
 
+```{r}
+# Island column ----
 
+# Fix inconsistent capitalization in the column
+penguins_clean <- penguins_clean %>% 
+  mutate(island = str_to_title(island))
 
+# Check
+unique(penguins_clean$island)
+```
 
+```{r}
+# Bill length column ----
 
+range(penguins_clean$bill_length_mm, na.rm = TRUE) #means to look at non NA values
+
+class(penguins_clean$bill_length_mm)
+
+# What values do I have that are not recognized as numeric
+penguins_clean %>% 
+  count(bill_length_mm) %>% 
+  filter(is.na(as.numeric(bill_length_mm)))
+
+penguins_clean <- penguins_clean %>% 
+  mutate(bill_length_mm = as.numeric(bill_length_mm))
+
+# Check range
+range(penguins_clean$bill_length_mm, na.rm = TRUE) # Oops can't have negative numbers...let's fix that!
+
+penguins_clean <- penguins_clean %>% 
+  mutate(bill_length_mm = case_when(bill_length_mm == -999.0 ~ NA,
+                                    .default = bill_length_mm))
+
+# Check range
+range(penguins_clean$bill_length_mm, na.rm = TRUE)
+```
+
+```{r}
+# Observation date column ----
+head(penguins_clean$observation_date)
+
+# Fix datetime
+penguins_clean <- penguins_clean %>% 
+  mutate(date = parse_date_time(observation_date, 
+                                orders = c("dmy", "ymd", "mdy",
+                                           "ymd HMS"))) #make a new column to work from and then delete the original column
+
+head(penguins_clean$date)
+
+# Do not need time
+penguins_clean <- penguins_clean %>% 
+  separate(col = date,
+           into = c("date", "time"),
+           sep = " ") %>% 
+  mutate(date = as.Date(date))
+
+# Drop columns we don't need after we check and are happy with the above output
+penguins_clean <- penguins_clean %>% 
+  select(-c(time, observation_date))
+
+# Create some new variables based on date
+penguins_clean <- penguins_clean %>% 
+  mutate(year = year(date), 
+         month = month(date, label = TRUE, abbr = FALSE),
+         day = day(date),
+         day_of_year = yday(date))
+```
+
+```{r}
+# Check for dublicates
+penguins_clean %>% 
+  get_dupes() # Now is the time to figure out what to do with the duplicates and how you want to proceed with them, check with data enter-er, etc...
+```
+
+```{r}
+# Remove duplicates (I talked with the field team!)
+# Count rows before removing
+nrow(penguins_clean)
+
+#Remove dupes
+penguins_clean <- penguins_clean %>% 
+  distinct()
+
+# Count after removing
+nrow(penguins_clean)
+```
+
+```{r}
+
+```
 
 
 
